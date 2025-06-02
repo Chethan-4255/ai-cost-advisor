@@ -1,6 +1,7 @@
 import { EnterpriseAICostOptimiserApiResponse } from '../types';
 
-const API_BASE_URL = 'http://localhost:3001/api/chat';
+// Use a relative path for API calls so it works on Vercel and locally
+const API_BASE_URL = '/api/chat';
 
 export const sendMessageToEnterpriseAICostOptimiser = async (
   message: string,
