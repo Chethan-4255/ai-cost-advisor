@@ -2,22 +2,31 @@ import express from 'express';
 import cors from 'cors';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Hardcoded configuration
-const LYZR_AGENT_API_BASE_URL = 'https://agent-prod.studio.lyzr.ai/v3/inference';
-const LYZR_AGENT_ID = '683d443d9bef0c4bbc197a67';
-const LYZR_API_KEY = 'sk-default-dqPBaVApdY2aXQ1BOurjzCuCdKDTknpW';
-const USER_ID = 'cvrockers15@gmail.com';
-const SESSION_ID = 'undefined-ct62rp22q4a';
+// Configuration from environment variables with fallbacks
+const LYZR_AGENT_API_BASE_URL = process.env.LYZR_AGENT_API_BASE_URL || 'https://agent-prod.studio.lyzr.ai/v3/inference';
+const LYZR_AGENT_ID = process.env.LYZR_AGENT_ID || '683d443d9bef0c4bbc197a67';
+const LYZR_API_KEY = process.env.LYZR_API_KEY || 'sk-default-dqPBaVApdY2aXQ1BOurjzCuCdKDTknpW';
+const USER_ID = process.env.USER_ID || 'cvrockers15@gmail.com';
+const SESSION_ID = process.env.SESSION_ID || 'undefined-ct62rp22q4a';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
-app.use(cors());
+// Enhanced CORS configuration
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
 app.use(express.json());
 
 // Serve static files from the dist directory
@@ -100,7 +109,7 @@ app.get('*', (req, res) => {
 // Only start the server if not in Vercel environment
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT} in development mode`);
+    console.log(`Server running on port ${PORT}`);
   });
 }
 
