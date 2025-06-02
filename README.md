@@ -1,27 +1,31 @@
-# Strategic AI Cost Advisor Manager
+# AI Cost Advisor
 
 A powerful enterprise AI cost optimization platform that provides strategic advisory for AI deployments, focusing on cost efficiency, ROI analysis, and implementation planning.
+
+## Demo
+
+Watch our demo video: [Strategic AI Cost Advisor Demo](https://www.youtube.com/watch?v=ehrixSj4Yzg)
 
 ## Features
 
 - Enterprise AI cost optimization analysis
-- AWS Bedrock model selection and pricing
-- Cost-efficient MVP architecture design
-- Detailed cost projections and ROI calculations
-- Advanced optimization strategies
-- C-suite level strategic advisory reports
+- ROI calculation and forecasting
+- Implementation planning and recommendations
+- Cost comparison across different AI solutions
+- Customizable reporting and dashboards
 
-## Tech Stack
+## Getting Started
 
-- Node.js
-- Express.js
-- Vercel (Deployment)
+### Prerequisites
 
-## Setup
+- Node.js 18.0.0 or higher
+- npm or yarn
+
+### Installation
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Chethan-4255/ai-cost-advisor.git
 cd ai-cost-advisor
 ```
 
@@ -30,22 +34,30 @@ cd ai-cost-advisor
 npm install
 ```
 
-3. Start the development server:
+3. Create a `.env` file in the root directory with your configuration:
+```env
+LYZR_AGENT_API_BASE_URL=your_api_base_url
+LYZR_AGENT_ID=your_agent_id
+LYZR_API_KEY=your_api_key
+USER_ID=your_user_id
+SESSION_ID=your_session_id
+```
+
+4. Start the development server:
 ```bash
 npm run dev
 ```
 
+5. Build for production:
+```bash
+npm run build
+```
+
 ## Deployment
 
-This project is configured for deployment on Vercel. To deploy:
+The project is configured for deployment on Vercel. Simply push your changes to the repository, and Vercel will automatically build and deploy your application.
 
-1. Push your code to GitHub
-2. Connect your GitHub repository to Vercel
-3. Deploy
-
-The project will automatically build and deploy on Vercel.
-
-## API Endpoints
+## API Documentation
 
 ### POST /api/chat
 Main endpoint for AI cost optimization analysis.
@@ -53,8 +65,7 @@ Main endpoint for AI cost optimization analysis.
 Request body:
 ```json
 {
-  "message": "Your message here",
-  "context": {} // Optional context
+  "message": "Your message here"
 }
 ```
 
@@ -64,15 +75,6 @@ Response:
   "message": "AI response"
 }
 ```
-
-## Configuration
-
-The server is configured with the following hardcoded values:
-- Lyzr API Base URL
-- Agent ID
-- API Key
-- User ID
-- Session ID
 
 ## License
 

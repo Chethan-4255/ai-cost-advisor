@@ -1,106 +1,119 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
+import path from 'path';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Hardcoded configuration
-const LYZR_AGENT_API_BASE_URL = 'https://agent-prod.studio.lyzr.ai/v3/inference';
-const LYZR_AGENT_ID = '683d443d9bef0c4bbc197a67';
-const LYZR_API_KEY = 'sk-default-dqPBaVApdY2aXQ1BOurjzCuCdKDTknpW';
-const USER_ID = 'cvrockers15@gmail.com';
-const SESSION_ID = 'undefined-ct62rp22q4a';
+// Load environment variables
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// CORS configuration
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key']
+}));
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 
-// Serve static files from the dist directory
-app.use(express.static(join(__dirname, '../dist')));
+// Serve static files with correct MIME types
+app.use('/assets', express.static(path.join(__dirname, '../dist/assets'), {
+  setHeaders: (res, path) => {
+    if (path.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    }
+  }
+}));
+
+// Constants
+const LYZR_AGENT_API_BASE_URL = process.env.LYZR_AGENT_API_BASE_URL || 'https://agent-prod.studio.lyzr.ai';
+const LYZR_AGENT_ID = process.env.LYZR_AGENT_ID || '683d443d9bef0c4bbc197a67';
+const LYZR_API_KEY = process.env.LYZR_API_KEY || 'sk-default-dqPBaVApdY2aXQ1BOurjzCuCdKDTknpW';
+const USER_ID = process.env.USER_ID || 'cvrockers15@gmail.com';
+const SESSION_ID = process.env.SESSION_ID || '683d443d9bef0c4bbc197a67-veuqcf131xo';
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok' });
-});
-
-// API endpoint for chat
-app.post('/api/chat', async (req, res) => {
   try {
-    const { message, context } = req.body;
-    
-    if (!message) {
-      return res.status(400).json({
-        error: 'Message is required',
-      });
-    }
-
-    console.log(`Received message: ${message}`);
-    console.log(`Context:`, context);
-
-    // Build the payload for Lyzr API v3
-    const payload = {
-      user_id: USER_ID,
-      agent_id: LYZR_AGENT_ID,
-      session_id: SESSION_ID,
-      message: message
-    };
-
-    // Make actual API call to Lyzr
-    const lyzrResponse = await fetch(`${LYZR_AGENT_API_BASE_URL}/chat/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': LYZR_API_KEY,
-      },
-      body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(300000), // 5 minute timeout
+    res.json({ 
+      status: 'ok', 
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV || 'development'
     });
-
-    const responseText = await lyzrResponse.text();
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch (parseError) {
-      console.error('Failed to parse Lyzr API response as JSON:', parseError);
-      throw new Error('Invalid response format from Lyzr API');
-    }
-
-    if (!lyzrResponse.ok) {
-      console.error('Lyzr API Error Response:', data);
-      throw new Error(data.detail || data.error || 'Failed to get response from Lyzr API');
-    }
-
-    res.json({ message: data.response || data.message });
-  } catch (apiError) {
-    console.error('Lyzr API Error:', apiError);
-    // More detailed error response
-    if (apiError.name === 'AbortError') {
-      res.status(504).json({ error: 'Request timed out while waiting for Lyzr API response' });
-    } else if (apiError.code === 'UND_ERR_HEADERS_TIMEOUT') {
-      res.status(504).json({ error: 'Connection timed out while waiting for Lyzr API headers' });
-    } else {
-      res.status(500).json({ 
-        error: apiError.message || 'Failed to communicate with Lyzr API',
-        details: apiError.cause || apiError.stack
-      });
-    }
+  } catch (error) {
+    console.error('Health check error:', error);
+    res.status(500).json({ 
+      status: 'error',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
   }
 });
 
-// For any other route, serve the React app
-app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, '../dist/index.html'));
+// Chat endpoint
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { message } = req.body;
+    if (typeof message !== 'string') {
+      return res.status(400).json({ error: 'Message is required and must be a string' });
+    }
+
+    console.log('Received chat request:', { message });
+
+    const response = await fetch(`${LYZR_AGENT_API_BASE_URL}/v3/inference/chat/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': LYZR_API_KEY
+      },
+      body: JSON.stringify({
+        user_id: USER_ID,
+        agent_id: LYZR_AGENT_ID,
+        session_id: SESSION_ID,
+        message: message
+      })
+    });
+
+    if (!response.ok) {
+      // Try to parse the error message from the API
+      let errorData;
+      try {
+        errorData = await response.json();
+      } catch {
+        errorData = { error: await response.text() };
+      }
+      console.error('API Error:', errorData);
+      return res.status(response.status).json({ error: errorData.detail || errorData.error || 'Unknown error from Lyzr API' });
+    }
+
+    const data = await response.json();
+    console.log('API Response:', data);
+    res.json(data);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ 
+      error: 'Internal server error',
+      message: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
-// Only start the server if not in Vercel environment
+// Serve the main index.html for all other routes
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
+// Only start the server if we're not in production (Vercel)
 if (process.env.NODE_ENV !== 'production') {
+  const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT} in development mode`);
+    console.log(`Server is running on port ${PORT}`);
   });
 }
 
