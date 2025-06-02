@@ -2,6 +2,12 @@
 
 A powerful enterprise AI cost optimization platform that provides strategic advisory for AI deployments, focusing on cost efficiency, ROI analysis, and implementation planning.
 
+
+## Demo
+
+Watch our demo video: [Strategic AI Cost Advisor Demo](https://www.youtube.com/watch?v=ehrixSj4Yzg)
+
+
 ## Features
 
 - Enterprise AI cost optimization analysis
