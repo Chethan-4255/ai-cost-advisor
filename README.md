@@ -21,7 +21,7 @@ A powerful enterprise AI cost optimization platform that provides strategic advi
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/Chethan-4255/ai-cost-advisor.git
 cd ai-cost-advisor
 ```
 
@@ -50,20 +50,6 @@ The project will automatically build and deploy on Vercel.
 ### POST /api/chat
 Main endpoint for AI cost optimization analysis.
 
-Request body:
-```json
-{
-  "message": "Your message here",
-  "context": {} // Optional context
-}
-```
-
-Response:
-```json
-{
-  "message": "AI response"
-}
-```
 
 ## Configuration
 
