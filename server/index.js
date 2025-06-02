@@ -3,9 +3,27 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+<<<<<<< HEAD
 
 // Load environment variables
 dotenv.config();
+=======
+import { dirname, join } from 'path';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// Configuration from environment variables with fallbacks
+const LYZR_AGENT_API_BASE_URL = process.env.LYZR_AGENT_API_BASE_URL || 'https://agent-prod.studio.lyzr.ai/v3/inference';
+const LYZR_AGENT_ID = process.env.LYZR_AGENT_ID || '683d443d9bef0c4bbc197a67';
+const LYZR_API_KEY = process.env.LYZR_API_KEY || 'sk-default-dqPBaVApdY2aXQ1BOurjzCuCdKDTknpW';
+const USER_ID = process.env.USER_ID || 'cvrockers15@gmail.com';
+const SESSION_ID = process.env.SESSION_ID || 'undefined-ct62rp22q4a';
+>>>>>>> 05126637e8810c4c2982581634eebbd79ae8ad38
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -18,7 +36,17 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key']
 }));
 
+<<<<<<< HEAD
 // Middleware
+=======
+// Enhanced CORS configuration
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+>>>>>>> 05126637e8810c4c2982581634eebbd79ae8ad38
 app.use(express.json());
 
 // Serve static files with correct MIME types
@@ -113,7 +141,11 @@ app.get('*', (req, res) => {
 if (process.env.NODE_ENV !== 'production') {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
+<<<<<<< HEAD
     console.log(`Server is running on port ${PORT}`);
+=======
+    console.log(`Server running on port ${PORT}`);
+>>>>>>> 05126637e8810c4c2982581634eebbd79ae8ad38
   });
 }
 

@@ -14,6 +14,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^4.18.2",
+<<<<<<< HEAD
     "lucide-react": "^0.344.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -27,6 +28,22 @@
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
     "@types/react-syntax-highlighter": "^15.5.11",
+=======
+<<<<<<< HEAD
+    "lucide-react": "^0.344.0",
+=======
+>>>>>>> a35a5cf63b0a83fb7fbb3a84530f77dc7951d17a
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+<<<<<<< HEAD
+    "@babel/plugin-transform-react-jsx": "^7.27.1",
+=======
+>>>>>>> a35a5cf63b0a83fb7fbb3a84530f77dc7951d17a
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+>>>>>>> 05126637e8810c4c2982581634eebbd79ae8ad38
     "@vitejs/plugin-react": "^4.0.0",
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",
@@ -36,5 +53,31 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  }
+  },
+  "builds": [
+    {
+      "src": "server/index.js",
+      "use": "@vercel/node"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server/index.js"
+    },
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/dist/$1"
+    }
+  ]
 }

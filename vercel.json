@@ -5,13 +5,24 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
+<<<<<<< HEAD
         "buildCommand": "npm run build",
         "outputDirectory": "dist"
+=======
+        "distDir": "dist"
+>>>>>>> 05126637e8810c4c2982581634eebbd79ae8ad38
       }
     },
     {
       "src": "server/index.js",
       "use": "@vercel/node"
+    },
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "dist"
+      }
     }
   ],
   "routes": [
@@ -30,8 +41,19 @@
       "handle": "filesystem"
     },
     {
+      "handle": "filesystem"
+    },
+    {
       "src": "/(.*)",
+<<<<<<< HEAD
       "dest": "/index.html"
+=======
+<<<<<<< HEAD
+      "dest": "/index.html"
+=======
+      "dest": "/dist/$1"
+>>>>>>> a35a5cf63b0a83fb7fbb3a84530f77dc7951d17a
+>>>>>>> 05126637e8810c4c2982581634eebbd79ae8ad38
     }
   ]
 } 

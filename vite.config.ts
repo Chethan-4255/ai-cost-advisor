@@ -21,6 +21,18 @@ export default defineConfig({
       }
     }
   },
+  build: {
+    outDir: 'dist',
+    emptyOutDir: true,
+    rollupOptions: {
+      external: ['react/jsx-runtime'],
+      output: {
+        manualChunks: {
+          'react': ['react', 'react-dom'],
+        }
+      }
+    }
+  },
   server: {
     proxy: {
       '/api': {
